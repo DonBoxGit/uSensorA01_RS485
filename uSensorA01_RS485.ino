@@ -1,6 +1,8 @@
-/* This sketch use A01NYUB ultrasonic sensor (Copyright DFRobot 2016)
+/* 
+   This sketch use A01NYUB ultrasonic sensor (Copyright DFRobot 2016)
    to measure distance and transmitting it to use RS-485(EIA/TIA) standart. 
-   Edited code by YRN ver. 1.0.0 on 18.07.2023 */
+   Edited code by YRN ver. 1.0.0 on 18.07.2023
+*/
 
 #include <SoftwareSerial.h>
 
@@ -13,7 +15,7 @@
 
 SoftwareSerial uSonicSensor(11, 10); // RX, TX
 unsigned char data[4] = {};
-float distance;
+float distance = 0.0f;
 uint32_t tmr = 0;
 
 void setup() {
