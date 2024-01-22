@@ -9,7 +9,7 @@
 
 #define ID_SLAVE                  1
 #define RS485_TX_RX_MODULE_PIN    6
-#define SENSOR_RESPONCE_TIME_MS   150     // 150ms - 300ms
+#define SENSOR_RESPONCE_TIME_MS   150     // 100ms - 300ms
 #define U_SENSOR_BAUDRATE         9600
 #define SERIAL_BAUDRATE           115200
 
@@ -30,7 +30,7 @@ void setup() {
 
 void loop() {
   modbus_array[0] = distance;
-  modbus.poll(modbus_array, sizeof(modbus_array) / sizeof(modbus_array[0]));
+  modbus.poll(modbus_array, 1);
   if (millis() - tmr > SENSOR_RESPONCE_TIME_MS) {
     if (readData(data, sizeof(data) / sizeof(data[0])) == 0xFF) {
       if (checkSum(data)) {
