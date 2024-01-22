@@ -1,51 +1,41 @@
 /* 
-   This sketch use A01NYUB ultrasonic sensor (Copyright DFRobot 2016)
-   to measure distance and transmitting it to use RS-485(EIA/TIA) standart. 
-   Edited code by YRN ver. 1.0.0 on 18.07.2023
+   This sketch use A01NYUB ultrasonic sensor(Copyright DFRobot 2016)
+   to measure distance and transmitting it to use RS-485 interface
+   and ModBus protocol. 
 */
+   
+#include <ModbusRtu.h>
+#include "u_sensor_a01.h"
 
-#include <SoftwareSerial.h>
-
+#define ID_SLAVE                  1
 #define RS485_TX_RX_MODULE_PIN    6
-#define RS485_TRANSMIT_MODE       1
-#define RS485_RECEIVE_MODE        0
 #define SENSOR_RESPONCE_TIME_MS   150     // 150ms - 300ms
 #define U_SENSOR_BAUDRATE         9600
 #define SERIAL_BAUDRATE           115200
 
 SoftwareSerial uSonicSensor(11, 10); // RX, TX
+Modbus modbus(ID_SLAVE, Serial, RS485_TX_RX_MODULE_PIN);
+
+uint16_t modbus_array[3] = {};
 unsigned char data[4] = {};
-float distance = 0.0f;
+uint16_t distance = 0;
 uint32_t tmr = 0;
 
 void setup() {
   Serial.begin(SERIAL_BAUDRATE);
   uSonicSensor.begin(U_SENSOR_BAUDRATE);
-
-  pinMode(RS485_TX_RX_MODULE_PIN, OUTPUT);
-  digitalWrite(RS485_TX_RX_MODULE_PIN, RS485_TRANSMIT_MODE);
+  modbus.start();
   tmr = millis();
 }
 
 void loop() {
+  modbus_array[0] = distance;
+  modbus.poll(modbus_array, sizeof(modbus_array) / sizeof(modbus_array[0]));
   if (millis() - tmr > SENSOR_RESPONCE_TIME_MS) {
-    do {
-      for (int i = 0; i < 4; i++)
-        data[i] = uSonicSensor.read();
-    } while (uSonicSensor.read() == 0xFF);
-    uSonicSensor.flush();
-  
-    if (data[0] == 0xFF) {
-      int sum;
-      sum = (data[0] + data[1] + data[2]) & 0x00FF;
-      if (sum == data[3]) {
-        distance = (data[1] << 8) + data[2];
-        if (distance > 280) {
-          Serial.print("distance=");
-          Serial.print(distance / 10);
-          Serial.println("cm");
-        } else Serial.println("Below the lower limit");
-      } else Serial.println("ERROR");
+    if (readData(data, sizeof(data) / sizeof(data[0])) == 0xFF) {
+      if (checkSum(data)) {
+        distance = getDistance(data);
+      } else distance = 0;
     }
     tmr = millis();
   }
