@@ -5,8 +5,9 @@
 #include <SoftwareSerial.h>
 
 extern SoftwareSerial uSonicSensor;
+extern unsigned char data[4];
 
-unsigned char readData(unsigned char* _data, uint8_t _size);
+unsigned char readData(unsigned char* _data);
 bool checkSum(unsigned char* _data);
 uint16_t getDistance(unsigned char* _data);
 

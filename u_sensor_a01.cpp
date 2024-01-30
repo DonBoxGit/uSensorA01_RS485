@@ -1,8 +1,10 @@
 #include "u_sensor_a01.h"
 
-unsigned char readData(unsigned char* _data, uint8_t _size) {
+unsigned char data[4] = {};
+
+unsigned char readData(unsigned char* _data) {
   do {
-      for (int i = 0; i < _size; i++)
+      for (int i = 0; i < 4; i++)
         _data[i] = uSonicSensor.read();
     } while (uSonicSensor.read() == 0xFF);
     uSonicSensor.flush();
