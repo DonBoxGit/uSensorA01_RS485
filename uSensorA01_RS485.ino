@@ -18,7 +18,7 @@
 #define RS485_TX_RX_MODULE_PIN      6     /* Direction pin RS485 module */
 #define U_SENSOR_RX_PIN             11
 #define U_SENSOR_TX_PIN             10
-#define U_SENSOR_RESPONCE_TIME_MS   150   /* 100ms - 300ms */
+#define U_SENSOR_RESPONCE_TIME_MS   150   /* 100ms - 300ms. Recommended 150ms */
 #define U_SENSOR_BAUDRATE           9600  
 #define SERIAL_BAUDRATE             9600
 #define AMOUNT_COIL                 1     /* 1 coil(Holding or Input register) of data in modbus_array */
